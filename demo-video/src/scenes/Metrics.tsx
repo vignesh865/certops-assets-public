@@ -1,6 +1,7 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { inter } from '../fonts';
 import { COLORS } from '../constants';
+import { SectionLabel } from '../components/SectionLabel';
 
 const METRICS = [
   { id: 'cosine-similarity', name: 'Cosine Similarity', type: 'DETERMINISTIC', score: 0.87, threshold: 0.75 },
@@ -45,7 +46,7 @@ const MetricCard: React.FC<{
         boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
         padding: '28px',
         opacity: cardProgress,
-        transform: `translateY(${interpolate(cardProgress, [0, 1], [20, 0])}px) scale(${interpolate(cardProgress, [0, 1], [0.93, 1])})`,
+        transform: `translateY(${interpolate(cardProgress, [0, 1], [20, 0])}px) scale(${interpolate(cardProgress, [0, 1], [0.94, 1])})`,
       }}
     >
       {/* Header */}
@@ -60,10 +61,11 @@ const MetricCard: React.FC<{
         <div>
           <div
             style={{
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: 600,
               color: COLORS.textPrimary,
               marginBottom: 8,
+              letterSpacing: '-0.01em',
             }}
           >
             {metric.name}
@@ -83,13 +85,15 @@ const MetricCard: React.FC<{
             {metric.type}
           </div>
         </div>
+        {/* Hero score — larger and bolder */}
         <div
           style={{
-            fontSize: 40,
-            fontWeight: 700,
+            fontSize: 52,
+            fontWeight: 800,
             color: scoreColor,
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.03em',
             lineHeight: 1,
+            fontVariantNumeric: 'tabular-nums',
           }}
         >
           {displayScore.toFixed(2)}
@@ -99,9 +103,9 @@ const MetricCard: React.FC<{
       {/* Score bar */}
       <div
         style={{
-          height: 8,
+          height: 6,
           background: '#e2e8f0',
-          borderRadius: 4,
+          borderRadius: 3,
           overflow: 'hidden',
         }}
       >
@@ -109,8 +113,8 @@ const MetricCard: React.FC<{
           style={{
             height: '100%',
             width: `${barProgress * metric.score * 100}%`,
-            background: `linear-gradient(90deg, ${scoreColor}70, ${scoreColor})`,
-            borderRadius: 4,
+            background: `linear-gradient(90deg, ${scoreColor}60, ${scoreColor})`,
+            borderRadius: 3,
           }}
         />
       </div>
@@ -130,8 +134,9 @@ const MetricCard: React.FC<{
         <span
           style={{
             fontSize: 12,
-            fontWeight: 600,
+            fontWeight: 700,
             color: passFail ? COLORS.green : '#ef4444',
+            letterSpacing: '0.02em',
           }}
         >
           {passFail ? '✓ PASS' : '✗ FAIL'}
@@ -145,8 +150,6 @@ export const Metrics: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const titleOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
-
   return (
     <AbsoluteFill
       style={{
@@ -159,25 +162,7 @@ export const Metrics: React.FC = () => {
         padding: '0 60px',
       }}
     >
-      {/* Title */}
-      <div
-        style={{
-          opacity: titleOpacity,
-          fontSize: 13,
-          color: COLORS.green,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: 32,
-          alignSelf: 'flex-start',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
-        Evaluation Results — retriever-service
-      </div>
+      <SectionLabel label="Evaluation Results — retriever-service" />
 
       {/* 2×2 grid */}
       <div

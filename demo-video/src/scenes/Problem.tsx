@@ -21,6 +21,9 @@ export const Problem: React.FC = () => {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   );
 
+  // Spotlight: fades in as typing starts
+  const spotOpacity = interpolate(frame, [0, 40], [0, 1], { extrapolateRight: 'clamp' });
+
   return (
     <AbsoluteFill
       style={{
@@ -33,15 +36,28 @@ export const Problem: React.FC = () => {
         padding: '0 120px',
       }}
     >
+      {/* Radial spotlight — very subtle green-tinted center glow */}
       <div
         style={{
-          fontSize: 56,
-          fontWeight: 700,
+          position: 'absolute',
+          inset: 0,
+          opacity: spotOpacity,
+          background:
+            'radial-gradient(ellipse 70% 55% at 50% 48%, rgba(5,150,105,0.055) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          fontSize: 68,
+          fontWeight: 800,
           color: COLORS.textPrimary,
           textAlign: 'center',
-          lineHeight: 1.15,
-          letterSpacing: '-0.025em',
+          lineHeight: 1.12,
+          letterSpacing: '-0.035em',
           maxWidth: 900,
+          position: 'relative',
         }}
       >
         {HEADLINE.slice(0, chars)}
@@ -49,22 +65,25 @@ export const Problem: React.FC = () => {
           style={{
             opacity: typingDone ? 0 : cursorVisible ? 1 : 0,
             color: COLORS.green,
-            marginLeft: 2,
+            marginLeft: 3,
+            fontWeight: 300,
           }}
         >
-          ▊
+          |
         </span>
       </div>
 
       <div
         style={{
-          marginTop: 32,
-          fontSize: 22,
+          marginTop: 28,
+          fontSize: 20,
           color: COLORS.textSecondary,
           opacity: subtextOpacity,
           fontWeight: 400,
           textAlign: 'center',
-          lineHeight: 1.5,
+          lineHeight: 1.6,
+          letterSpacing: '-0.005em',
+          position: 'relative',
         }}
       >
         {SUBTEXT}

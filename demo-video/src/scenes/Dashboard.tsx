@@ -2,13 +2,11 @@ import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } fr
 import { inter } from '../fonts';
 import { COLORS } from '../constants';
 import { BrowserFrame } from '../components/BrowserFrame';
+import { SectionLabel } from '../components/SectionLabel';
 
 export const Dashboard: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  // Section label fade-in
-  const labelOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
 
   // Screenshot: spring settle on entry, completely still after
   const settleProgress = spring({ frame, fps, config: { damping: 200 } });
@@ -42,25 +40,7 @@ export const Dashboard: React.FC = () => {
         padding: '40px 64px',
       }}
     >
-      {/* Section label */}
-      <div
-        style={{
-          opacity: labelOpacity,
-          fontSize: 13,
-          color: COLORS.green,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: 24,
-          alignSelf: 'flex-start',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
-        Your Certification Command Center
-      </div>
+      <SectionLabel label="Your Certification Command Center" />
 
       {/* Browser frame — springs in, holds still */}
       <div

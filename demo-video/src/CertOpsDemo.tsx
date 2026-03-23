@@ -1,8 +1,7 @@
-import { AbsoluteFill } from 'remotion';
+import { AbsoluteFill, interpolate, staticFile, useVideoConfig } from 'remotion';
 import { TransitionSeries, linearTiming } from '@remotion/transitions';
 import { fade } from '@remotion/transitions/fade';
-// import { Audio } from '@remotion/media';
-// import { staticFile } from 'remotion';
+import { Audio } from '@remotion/media';
 import { inter } from './fonts';
 import { SCENE_DURATIONS, TRANSITION_FRAMES } from './constants';
 import { Problem } from './scenes/Problem';
@@ -19,28 +18,22 @@ import { CTA } from './scenes/CTA';
 const FADE = linearTiming({ durationInFrames: TRANSITION_FRAMES });
 
 export const CertOpsDemo: React.FC = () => {
-  // Uncomment when public/bg-music.mp3 is added:
-  // const { durationInFrames, fps } = useVideoConfig();
+  const { durationInFrames, fps } = useVideoConfig();
 
   return (
-    <AbsoluteFill style={{ fontFamily: inter, background: '#ffffff' }}>
-      {/*
-        Background music — uncomment after placing an audio file at:
-        demo-video/public/bg-music.mp3
-
-        <Audio
-          src={staticFile('bg-music.mp3')}
-          loop
-          volume={(f) =>
-            interpolate(
-              f,
-              [0, 1 * fps, durationInFrames - 1.5 * fps, durationInFrames],
-              [0, 0.35, 0.35, 0],
-              { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-            )
-          }
-        />
-      */}
+    <AbsoluteFill style={{ fontFamily: inter, background: '#f7f7f5' }}>
+      <Audio
+        src={staticFile('music/background.mp3')}
+        loop
+        volume={(f) =>
+          interpolate(
+            f,
+            [0, 1 * fps, durationInFrames - 2 * fps, durationInFrames],
+            [0, 0.3, 0.3, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+          )
+        }
+      />
 
       {/* Scale 1280×720 design up to fill 1920×1080 canvas */}
       <div

@@ -1,6 +1,7 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { inter } from '../fonts';
 import { COLORS } from '../constants';
+import { SectionLabel } from '../components/SectionLabel';
 
 const STEPS = [
   {
@@ -36,9 +37,8 @@ export const Engine: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const titleOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
-
-  const subtitleOpacity = interpolate(frame, [130, 155], [0, 1], {
+  // DECIDE activates at 115, springs settled ~130 → tagline waits 15f more (0.5s hold)
+  const subtitleOpacity = interpolate(frame, [145, 168], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -55,24 +55,7 @@ export const Engine: React.FC = () => {
         padding: '0 60px',
       }}
     >
-      {/* Title */}
-      <div
-        style={{
-          opacity: titleOpacity,
-          fontSize: 13,
-          color: COLORS.green,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: 56,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
-        Attack — Check — Decide
-      </div>
+      <SectionLabel label="Attack — Check — Decide" />
 
       {/* Pipeline */}
       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
@@ -102,9 +85,12 @@ export const Engine: React.FC = () => {
                 key={step.id}
                 style={{
                   flex: 1,
-                  background: COLORS.surface,
+                  // Colored gradient tint from top when active — the "breath" effect
+                  background: activated
+                    ? `linear-gradient(180deg, ${step.color}08 0%, ${COLORS.surface} 55%)`
+                    : COLORS.surface,
                   borderRadius: 16,
-                  border: `1.5px solid ${activated ? step.color : COLORS.border}`,
+                  border: `1.5px solid ${activated ? step.color + '50' : COLORS.border}`,
                   padding: '32px 28px',
                   opacity: cardOpacity,
                   boxShadow: activated
@@ -133,8 +119,8 @@ export const Engine: React.FC = () => {
                     width: 52,
                     height: 52,
                     borderRadius: 12,
-                    background: `${step.color}18`,
-                    border: `1px solid ${step.color}40`,
+                    background: `${step.color}12`,
+                    border: `1px solid ${step.color}35`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -152,7 +138,7 @@ export const Engine: React.FC = () => {
                     fontSize: 20,
                     fontWeight: 700,
                     color: COLORS.textPrimary,
-                    letterSpacing: '0.05em',
+                    letterSpacing: '0.04em',
                     marginBottom: 12,
                   }}
                 >
@@ -200,13 +186,14 @@ export const Engine: React.FC = () => {
       <div
         style={{
           marginTop: 48,
-          fontSize: 15,
+          fontSize: 14,
           color: COLORS.textMuted,
           opacity: subtitleOpacity,
-          letterSpacing: '0.02em',
+          letterSpacing: '0.03em',
+          fontWeight: 500,
         }}
       >
-        Automated. Reproducible. Blocking.
+        Automated · Reproducible · Blocking
       </div>
     </AbsoluteFill>
   );

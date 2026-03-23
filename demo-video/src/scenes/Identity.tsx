@@ -20,14 +20,14 @@ export const Identity: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  const dividerWidth = interpolate(frame, [50, 75], [0, 320], {
+  const dividerWidth = interpolate(frame, [50, 75], [0, 300], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   const pillProgress = (i: number) =>
     spring({
-      frame: frame - 65 - i * 10,
+      frame: frame - 65 - i * 12,
       fps,
       config: { damping: 20, stiffness: 200 },
     });
@@ -43,6 +43,22 @@ export const Identity: React.FC = () => {
         fontFamily: inter,
       }}
     >
+      {/* Subtle radial glow behind logo */}
+      <div
+        style={{
+          position: 'absolute',
+          width: 480,
+          height: 480,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(5,150,105,0.06) 0%, transparent 70%)`,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -55%)',
+          pointerEvents: 'none',
+          opacity: logoOpacity,
+        }}
+      />
+
       {/* Logo mark + name */}
       <div
         style={{
@@ -58,11 +74,11 @@ export const Identity: React.FC = () => {
             width: 72,
             height: 72,
             borderRadius: 18,
-            background: `linear-gradient(135deg, ${COLORS.green}, #059669)`,
+            background: `linear-gradient(135deg, ${COLORS.green}, #047857)`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: `0 0 40px ${COLORS.green}40`,
+            boxShadow: `0 0 40px ${COLORS.green}35, 0 8px 24px rgba(0,0,0,0.12)`,
           }}
         >
           <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
@@ -86,8 +102,8 @@ export const Identity: React.FC = () => {
         <div
           style={{
             fontSize: 72,
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
+            fontWeight: 800,
+            letterSpacing: '-0.04em',
             lineHeight: 1,
           }}
         >
@@ -100,12 +116,12 @@ export const Identity: React.FC = () => {
       <div
         style={{
           marginTop: 20,
-          fontSize: 28,
+          fontSize: 26,
           color: COLORS.textSecondary,
           opacity: taglineOpacity,
           transform: `translateY(${taglineY}px)`,
-          fontWeight: 400,
-          letterSpacing: '-0.01em',
+          fontWeight: 500,
+          letterSpacing: '-0.015em',
         }}
       >
         The Universal AI Verifier
@@ -121,19 +137,21 @@ export const Identity: React.FC = () => {
         }}
       />
 
-      {/* Pills */}
-      <div style={{ marginTop: 32, display: 'flex', gap: 12 }}>
+      {/* Pills — rectangular badge style, more enterprise */}
+      <div style={{ marginTop: 32, display: 'flex', gap: 10 }}>
         {PILLS.map((label, i) => (
           <div
             key={label}
             style={{
-              padding: '10px 20px',
-              borderRadius: 24,
+              padding: '9px 18px',
+              borderRadius: 8,
               border: `1px solid ${COLORS.border}`,
               background: COLORS.surface,
               color: COLORS.textSecondary,
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: 500,
+              letterSpacing: '0.005em',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
               opacity: pillProgress(i),
               transform: `scale(${pillProgress(i)})`,
             }}

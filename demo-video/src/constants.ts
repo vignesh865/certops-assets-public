@@ -1,11 +1,11 @@
 export const COLORS = {
-  bg: '#ffffff',
-  surface: '#f8fafc',
-  border: '#e2e8f0',
+  bg: '#f7f7f5',         // warm off-white — depth without harshness
+  surface: '#ffffff',    // cards sit on top of bg
+  border: '#e5e5e2',     // warm-tinted border
   green: '#059669',
-  textPrimary: '#0f172a',
-  textSecondary: '#475569',
-  textMuted: '#94a3b8',
+  textPrimary: '#09090b',   // Radix zinc-950 — richest black
+  textSecondary: '#52525b',  // zinc-600
+  textMuted: '#a1a1aa',     // zinc-400
   terminalBg: '#0d1117',
   terminalHeader: '#161b22',
   terminalBorder: '#30363d',
@@ -19,7 +19,7 @@ export const SCENE_DURATIONS = {
   dashboard: 210,  // 7s — NEW
   wizard: 210,     // 7s — NEW
   config: 150,     // 5s (shortened)
-  engine: 150,     // 5s (shortened)
+  engine: 180,     // 6s — extended hold after DECIDE
   terminal: 180,   // 6s — NEW
   metrics: 150,    // 5s (shortened)
   verdict: 240,    // 8s (extended)

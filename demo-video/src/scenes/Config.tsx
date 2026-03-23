@@ -1,6 +1,7 @@
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { inter } from '../fonts';
 import { COLORS } from '../constants';
+import { SectionLabel } from '../components/SectionLabel';
 
 const YAML_LINES = [
   { text: 'suite: rag-pipeline-audit', color: '#e6edf3' },
@@ -27,7 +28,6 @@ const FRAMES_PER_LINE = 10;
 export const Config: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const titleOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
   const visibleLines = Math.min(YAML_LINES.length, Math.floor(frame / FRAMES_PER_LINE));
   const cursorVisible = visibleLines < YAML_LINES.length && Math.floor(frame / 8) % 2 === 0;
 
@@ -43,35 +43,17 @@ export const Config: React.FC = () => {
         padding: '0 80px',
       }}
     >
-      {/* Section label */}
-      <div
-        style={{
-          opacity: titleOpacity,
-          fontSize: 13,
-          color: COLORS.green,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: 24,
-          alignSelf: 'flex-start',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
-        Configuration as Code
-      </div>
+      <SectionLabel label="Configuration as Code" />
 
       {/* Terminal window */}
       <div
         style={{
           background: COLORS.terminalBg,
-          borderRadius: 12,
+          borderRadius: 14,
           overflow: 'hidden',
           width: '100%',
           border: `1px solid ${COLORS.terminalBorder}`,
-          boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1)',
         }}
       >
         {/* Window chrome */}

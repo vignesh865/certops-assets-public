@@ -2,13 +2,11 @@ import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } fr
 import { inter } from '../fonts';
 import { COLORS } from '../constants';
 import { BrowserFrame } from '../components/BrowserFrame';
+import { SectionLabel } from '../components/SectionLabel';
 
 export const TerminalScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  // Label
-  const labelOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
 
   // Left panel (PASS) slides in from left
   const leftX = interpolate(frame, [10, 35], [-60, 0], {
@@ -75,25 +73,7 @@ export const TerminalScene: React.FC = () => {
         padding: '40px 64px',
       }}
     >
-      {/* Section label */}
-      <div
-        style={{
-          opacity: labelOpacity,
-          fontSize: 13,
-          color: COLORS.green,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: 24,
-          alignSelf: 'flex-start',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
-        CI/CD Integration — Real terminal output
-      </div>
+      <SectionLabel label="CI/CD Integration — Real terminal output" />
 
       {/* Split layout */}
       <div style={{ display: 'flex', gap: 20, width: '100%', alignItems: 'flex-start' }}>
