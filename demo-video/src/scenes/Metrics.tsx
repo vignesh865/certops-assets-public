@@ -1,0 +1,202 @@
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { inter } from '../fonts';
+import { COLORS } from '../constants';
+
+const METRICS = [
+  { id: 'cosine-similarity', name: 'Cosine Similarity', type: 'DETERMINISTIC', score: 0.87, threshold: 0.75 },
+  { id: 'hallucination', name: 'Hallucination', type: 'LLM JUDGE', score: 0.91, threshold: 0.85 },
+  { id: 'rouge-l', name: 'ROUGE-L', type: 'DETERMINISTIC', score: 0.83, threshold: 0.70 },
+  { id: 'answer-relevance', name: 'Answer Relevance', type: 'LLM JUDGE', score: 0.89, threshold: 0.80 },
+] as const;
+
+const STAGGER = 18;
+
+type MetricType = typeof METRICS[number];
+
+const MetricCard: React.FC<{
+  metric: MetricType;
+  delay: number;
+  frame: number;
+  fps: number;
+}> = ({ metric, delay, frame, fps }) => {
+  const cardProgress = spring({
+    frame: frame - delay,
+    fps,
+    config: { damping: 20, stiffness: 200 },
+  });
+
+  const barProgress = spring({
+    frame: frame - delay - 12,
+    fps,
+    config: { damping: 200 },
+  });
+
+  const scoreColor = metric.score >= 0.85 ? COLORS.green : '#f59e0b';
+  const passFail = metric.score >= metric.threshold;
+
+  const displayScore = Math.min(metric.score, barProgress * metric.score);
+
+  return (
+    <div
+      style={{
+        background: COLORS.surface,
+        borderRadius: 16,
+        border: `1px solid ${COLORS.border}`,
+        padding: '28px',
+        opacity: cardProgress,
+        transform: `translateY(${interpolate(cardProgress, [0, 1], [20, 0])}px) scale(${interpolate(cardProgress, [0, 1], [0.93, 1])})`,
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: 20,
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontSize: 15,
+              fontWeight: 600,
+              color: COLORS.textPrimary,
+              marginBottom: 8,
+            }}
+          >
+            {metric.name}
+          </div>
+          <div
+            style={{
+              display: 'inline-flex',
+              padding: '3px 10px',
+              borderRadius: 6,
+              background: metric.type === 'DETERMINISTIC' ? '#1e3a5f' : '#2d1b69',
+              color: metric.type === 'DETERMINISTIC' ? '#60a5fa' : '#a78bfa',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+            }}
+          >
+            {metric.type}
+          </div>
+        </div>
+        <div
+          style={{
+            fontSize: 40,
+            fontWeight: 700,
+            color: scoreColor,
+            letterSpacing: '-0.02em',
+            lineHeight: 1,
+          }}
+        >
+          {displayScore.toFixed(2)}
+        </div>
+      </div>
+
+      {/* Score bar */}
+      <div
+        style={{
+          height: 8,
+          background: COLORS.bg,
+          borderRadius: 4,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${barProgress * metric.score * 100}%`,
+            background: `linear-gradient(90deg, ${scoreColor}70, ${scoreColor})`,
+            borderRadius: 4,
+          }}
+        />
+      </div>
+
+      {/* Threshold row */}
+      <div
+        style={{
+          marginTop: 10,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <span style={{ fontSize: 12, color: COLORS.textMuted }}>
+          Threshold: {metric.threshold}
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: passFail ? COLORS.green : '#ef4444',
+          }}
+        >
+          {passFail ? '✓ PASS' : '✗ FAIL'}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export const Metrics: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const titleOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' });
+
+  return (
+    <AbsoluteFill
+      style={{
+        background: COLORS.bg,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: inter,
+        padding: '0 60px',
+      }}
+    >
+      {/* Title */}
+      <div
+        style={{
+          opacity: titleOpacity,
+          fontSize: 13,
+          color: COLORS.green,
+          fontWeight: 600,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          marginBottom: 32,
+          alignSelf: 'flex-start',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <div style={{ width: 20, height: 1.5, background: COLORS.green }} />
+        Evaluation Results — retriever-service
+      </div>
+
+      {/* 2×2 grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 20,
+          width: '100%',
+        }}
+      >
+        {METRICS.map((metric, i) => (
+          <MetricCard
+            key={metric.id}
+            metric={metric}
+            delay={i * STAGGER}
+            frame={frame}
+            fps={fps}
+          />
+        ))}
+      </div>
+    </AbsoluteFill>
+  );
+};
