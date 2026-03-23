@@ -108,8 +108,8 @@ export const Engine: React.FC = () => {
                   padding: '32px 28px',
                   opacity: cardOpacity,
                   boxShadow: activated
-                    ? `0 0 32px ${step.color}30`
-                    : 'none',
+                    ? `0 0 24px ${step.color}22, 0 4px 16px rgba(0,0,0,0.06)`
+                    : '0 2px 8px rgba(0,0,0,0.04)',
                 }}
               >
                 {/* Step number */}

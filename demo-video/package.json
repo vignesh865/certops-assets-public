@@ -29,7 +29,7 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
-    "render": "remotion render CertOpsDemo out/certops-demo.mp4"
+    "render": "remotion render CertOpsDemo out/certops-demo0.mp4"
   },
   "sideEffects": [
     "*.css"

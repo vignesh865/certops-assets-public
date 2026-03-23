@@ -42,6 +42,7 @@ const MetricCard: React.FC<{
         background: COLORS.surface,
         borderRadius: 16,
         border: `1px solid ${COLORS.border}`,
+        boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
         padding: '28px',
         opacity: cardProgress,
         transform: `translateY(${interpolate(cardProgress, [0, 1], [20, 0])}px) scale(${interpolate(cardProgress, [0, 1], [0.93, 1])})`,
@@ -72,8 +73,8 @@ const MetricCard: React.FC<{
               display: 'inline-flex',
               padding: '3px 10px',
               borderRadius: 6,
-              background: metric.type === 'DETERMINISTIC' ? '#1e3a5f' : '#2d1b69',
-              color: metric.type === 'DETERMINISTIC' ? '#60a5fa' : '#a78bfa',
+              background: metric.type === 'DETERMINISTIC' ? '#dbeafe' : '#ede9fe',
+              color: metric.type === 'DETERMINISTIC' ? '#1d4ed8' : '#6d28d9',
               fontSize: 10,
               fontWeight: 700,
               letterSpacing: '0.08em',
@@ -99,7 +100,7 @@ const MetricCard: React.FC<{
       <div
         style={{
           height: 8,
-          background: COLORS.bg,
+          background: '#e2e8f0',
           borderRadius: 4,
           overflow: 'hidden',
         }}

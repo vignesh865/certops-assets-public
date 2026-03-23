@@ -7,8 +7,11 @@ import { inter } from './fonts';
 import { SCENE_DURATIONS, TRANSITION_FRAMES } from './constants';
 import { Problem } from './scenes/Problem';
 import { Identity } from './scenes/Identity';
+import { Dashboard } from './scenes/Dashboard';
+import { WizardShowcase } from './scenes/WizardShowcase';
 import { Config } from './scenes/Config';
 import { Engine } from './scenes/Engine';
+import { TerminalScene } from './scenes/TerminalScene';
 import { Metrics } from './scenes/Metrics';
 import { Verdict } from './scenes/Verdict';
 import { CTA } from './scenes/CTA';
@@ -20,7 +23,7 @@ export const CertOpsDemo: React.FC = () => {
   // const { durationInFrames, fps } = useVideoConfig();
 
   return (
-    <AbsoluteFill style={{ fontFamily: inter, background: '#060d1a' }}>
+    <AbsoluteFill style={{ fontFamily: inter, background: '#ffffff' }}>
       {/*
         Background music — uncomment after placing an audio file at:
         demo-video/public/bg-music.mp3
@@ -39,6 +42,18 @@ export const CertOpsDemo: React.FC = () => {
         />
       */}
 
+      {/* Scale 1280×720 design up to fill 1920×1080 canvas */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 1280,
+          height: 720,
+          transformOrigin: 'top left',
+          transform: 'scale(1.5)',
+        }}
+      >
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.problem}>
           <Problem />
@@ -50,6 +65,16 @@ export const CertOpsDemo: React.FC = () => {
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={FADE} />
 
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.dashboard}>
+          <Dashboard />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition presentation={fade()} timing={FADE} />
+
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.wizard}>
+          <WizardShowcase />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition presentation={fade()} timing={FADE} />
+
         <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.config}>
           <Config />
         </TransitionSeries.Sequence>
@@ -57,6 +82,11 @@ export const CertOpsDemo: React.FC = () => {
 
         <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.engine}>
           <Engine />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition presentation={fade()} timing={FADE} />
+
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.terminal}>
+          <TerminalScene />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={FADE} />
 
@@ -74,6 +104,7 @@ export const CertOpsDemo: React.FC = () => {
           <CTA />
         </TransitionSeries.Sequence>
       </TransitionSeries>
+      </div>
     </AbsoluteFill>
   );
 };
