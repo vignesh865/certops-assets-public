@@ -16,30 +16,25 @@ const CURSOR_LEAD = 18;
 const T0 = STEP_FRAMES - SLIDE_FRAMES;       // 53 — step 0→1 slide starts
 const T1 = STEP_FRAMES * 2 - SLIDE_FRAMES;   // 118 — step 1→2 slide starts
 
-// ─── Layout math ─────────────────────────────────────────────────────────────
-// Images: 3024×1716 px (2× retina). Aspect = 3024/1716 = 1.762
-// Carousel width set to 960px so image height = 960/1.762 = 545px
-// Total content: SectionLabel(48) + Carousel(545) + Dots(40) = 633px
-// Scene inner height: 720 - 80 = 640px → 7px breathing room, no overflow ✓
+// ─── Layout math (split: left caption / right carousel) ──────────────────────
+// Scene inner: 1152 × 640 (after 40/64 padding on a 1280×720 stage).
+// Row: leftPane(360) + gap(56) + carousel(720) = 1136. Centered → 8px each side.
+// Carousel image: 3024×1716 → aspect 1.762 → height 720/1.762 ≈ 408.
+// Carousel top in scene: 40 + (640-408)/2 = 156.
+// Carousel left in scene: 64 + 8 + 360 + 56 = 488.
+// "Next >" button at ~95% x, ~97.4% y of image:
+//   x = 488 + 720*0.95 = 1172
+//   y = 156 + 408*0.974 = 553
 // ─────────────────────────────────────────────────────────────────────────────
-const CAROUSEL_W = 960;
-const CAROUSEL_H = 545; // 960 / 1.762
+const LEFT_W = 360;
+const GAP = 56;
+const CAROUSEL_W = 720;
+const CAROUSEL_H = 408;
+const BTN_X = 1172;
+const BTN_Y = 553;
 
-// Carousel is centered in the scene:
-// scene left-pad (64) + centering ((1152-960)/2 = 96) = 160px from scene left
-// Content start y: 40 + (640-633)/2 = 43.5px
-// Carousel start y: 43.5 + 48 (label) = 91.5px
-// "Next >" button position in image: ~95% x, ~97.4% y
-//   x = 160 + 960*0.95 = 160 + 912 = 1072px (scene)
-//   y = 91.5 + 545*0.974 = 91.5 + 531 = 622px (scene)
-const BTN_X = 1068;
-const BTN_Y = 618;
-
-/** Modern ring + dot cursor — replaces old-school arrow */
 const Cursor: React.FC<{ clicking: boolean }> = ({ clicking }) => (
-  // Container is 0×0; children are absolutely centered on the cursor hot-point
   <div style={{ position: 'relative', width: 0, height: 0 }}>
-    {/* Outer ring — contracts and turns green on click */}
     <div
       style={{
         position: 'absolute',
@@ -55,7 +50,6 @@ const Cursor: React.FC<{ clicking: boolean }> = ({ clicking }) => (
           : `0 1px 4px rgba(0,0,0,0.14)`,
       }}
     />
-    {/* Inner dot */}
     <div
       style={{
         position: 'absolute',
@@ -97,11 +91,19 @@ export const WizardShowcase: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
+  const captionOpacity = interpolate(frame, [4, 28], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const captionY = interpolate(frame, [4, 28], [16, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
   const slideFlash = isSliding ? 1 - slideProgress : 0;
   const breathe = (Math.sin(frame * 0.07) + 1) / 2;
   const glowOpacity = containerOpacity * (slideFlash * 0.55 + 0.15 + 0.15 * breathe);
 
-  // ── Cursor click lifecycle ──────────────────────────────────────────────────
   let cursorLife = -1;
   if (frame >= T0 - CURSOR_LEAD && frame < T0 + SLIDE_FRAMES) {
     cursorLife = frame - (T0 - CURSOR_LEAD);
@@ -110,7 +112,6 @@ export const WizardShowcase: React.FC = () => {
   }
   const showCursor = cursorLife >= 0 && stepIndex < STEPS.length - 1;
 
-  // Slide in from the right
   const cursorDX = showCursor
     ? interpolate(cursorLife, [0, 10], [48, 0], {
         extrapolateLeft: 'clamp',
@@ -118,7 +119,6 @@ export const WizardShowcase: React.FC = () => {
       })
     : 0;
 
-  // Fade in → hold → fade out as slide completes
   const cursorOpacity = showCursor
     ? interpolate(cursorLife, [0, 5, CURSOR_LEAD + 3, CURSOR_LEAD + SLIDE_FRAMES], [0, 1, 1, 0], {
         extrapolateLeft: 'clamp',
@@ -126,10 +126,8 @@ export const WizardShowcase: React.FC = () => {
       })
     : 0;
 
-  // Click: scale-down at the slide moment, spring back
   const clicking = showCursor && cursorLife >= CURSOR_LEAD - 1 && cursorLife <= CURSOR_LEAD + 5;
 
-  // Ripple
   const rippleLife = showCursor ? cursorLife - CURSOR_LEAD : -1;
   const rippleSize =
     rippleLife >= 0
@@ -151,16 +149,106 @@ export const WizardShowcase: React.FC = () => {
       style={{
         background: COLORS.bg,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: GAP,
         fontFamily: inter,
         padding: '40px 64px',
       }}
     >
-      <SectionLabel label="Launch a certification in 3 steps" />
+      {/* ── Left caption pane ─────────────────────────────────────────────── */}
+      <div
+        style={{
+          width: LEFT_W,
+          display: 'flex',
+          flexDirection: 'column',
+          opacity: captionOpacity,
+          transform: `translateY(${captionY}px)`,
+        }}
+      >
+        <SectionLabel label="Onboarding" />
 
-      {/* Carousel — narrowed to 960px so full image (including Next button) fits in scene */}
+        <div
+          style={{
+            fontSize: 44,
+            fontWeight: 800,
+            color: COLORS.textPrimary,
+            lineHeight: 1.08,
+            letterSpacing: '-0.022em',
+          }}
+        >
+          From zero to certified in 3 clicks.
+        </div>
+
+        <div
+          style={{
+            marginTop: 18,
+            fontSize: 16,
+            fontWeight: 500,
+            color: COLORS.textSecondary,
+            lineHeight: 1.5,
+          }}
+        >
+          Paste a manifest. Pick targets. Hit launch. CertOps takes it from there —
+          adversarial generation, grading, signed verdict.
+        </div>
+
+        {/* Vertical step ticker */}
+        <div
+          style={{
+            marginTop: 28,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
+          {STEPS.map((step, i) => {
+            const active = i === stepIndex;
+            return (
+              <div
+                key={step.src}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  opacity: active ? 1 : 0.45,
+                  transition: 'opacity 0.2s',
+                }}
+              >
+                <div
+                  style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: '50%',
+                    background: active ? COLORS.green : 'transparent',
+                    border: `1.5px solid ${active ? COLORS.green : COLORS.border}`,
+                    color: active ? '#ffffff' : COLORS.textMuted,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 11,
+                    fontWeight: 700,
+                  }}
+                >
+                  {i + 1}
+                </div>
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: active ? 600 : 500,
+                    color: active ? COLORS.textPrimary : COLORS.textSecondary,
+                  }}
+                >
+                  {step.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Right carousel pane ───────────────────────────────────────────── */}
       <div
         style={{
           width: CAROUSEL_W,
@@ -194,36 +282,7 @@ export const WizardShowcase: React.FC = () => {
         ))}
       </div>
 
-      {/* Step dots + label */}
-      <div
-        style={{
-          marginTop: 20,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          opacity: containerOpacity,
-        }}
-      >
-        {STEPS.map((step, i) => (
-          <div key={step.src} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div
-              style={{
-                width: i === stepIndex ? 24 : 8,
-                height: 8,
-                borderRadius: 4,
-                background: i === stepIndex ? COLORS.green : COLORS.border,
-              }}
-            />
-            {i === stepIndex && (
-              <span style={{ fontSize: 13, color: COLORS.textSecondary, fontWeight: 500 }}>
-                {step.label}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* ── Cursor overlay — absolutely positioned over the "Next >" button ── */}
+      {/* ── Cursor overlay over the "Next >" button in the carousel ─────── */}
       {showCursor && (
         <div
           style={{
@@ -235,7 +294,6 @@ export const WizardShowcase: React.FC = () => {
             zIndex: 10,
           }}
         >
-          {/* Click ripple */}
           <div
             style={{
               position: 'absolute',

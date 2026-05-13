@@ -47,16 +47,27 @@ export const AdversarialHero: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
+  // "Why" copy on the right — fades in after subtitle starts
+  const whyOpacity = interpolate(frame, [108, 138], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const whyY = interpolate(frame, [108, 138], [16, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
   return (
     <AbsoluteFill
       style={{
         background: COLORS.terminalBg,
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center',
         fontFamily: inter,
         padding: '0 96px',
+        gap: 80,
       }}
     >
       {/* Radial glow behind headline */}
@@ -64,85 +75,133 @@ export const AdversarialHero: React.FC = () => {
         style={{
           position: 'absolute',
           top: '50%',
-          left: '50%',
+          left: '32%',
           width: 700,
           height: 500,
-          transform: 'translate(-50%, -60%)',
+          transform: 'translate(-50%, -50%)',
           background: `radial-gradient(ellipse at center, rgba(5,150,105,0.14) 0%, transparent 70%)`,
           opacity: glowOpacity,
           pointerEvents: 'none',
         }}
       />
 
-      {/* "Adversarial" */}
-      <div
-        style={{
-          fontSize: 80,
-          fontWeight: 900,
-          color: '#ffffff',
-          lineHeight: 1,
-          letterSpacing: '-0.02em',
-          opacity: word1Opacity,
-          transform: `translateY(${word1Y}px)`,
-        }}
-      >
-        Adversarial
+      {/* Left: headline */}
+      <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        <div
+          style={{
+            fontSize: 80,
+            fontWeight: 900,
+            color: '#ffffff',
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+            opacity: word1Opacity,
+            transform: `translateY(${word1Y}px)`,
+          }}
+        >
+          Adversarial
+        </div>
+
+        <div
+          style={{
+            fontSize: 80,
+            fontWeight: 900,
+            color: '#ffffff',
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+            opacity: word2Opacity,
+            transform: `translateY(${word2Y}px)`,
+            marginTop: 4,
+          }}
+        >
+          Data Engine
+        </div>
+
+        <div
+          style={{
+            width: barWidth,
+            height: 3,
+            background: COLORS.green,
+            borderRadius: 2,
+            marginTop: 28,
+            boxShadow: `0 0 12px ${COLORS.green}80`,
+          }}
+        />
+
+        <div
+          style={{
+            marginTop: 20,
+            fontSize: 15,
+            fontWeight: 500,
+            color: COLORS.green,
+            fontFamily: COLORS.monoFont,
+            letterSpacing: '0.02em',
+            minHeight: 22,
+          }}
+        >
+          {subtitleText}
+          {cursorVisible && (
+            <span
+              style={{
+                display: 'inline-block',
+                width: 9,
+                height: 16,
+                background: COLORS.green,
+                marginLeft: 2,
+                verticalAlign: 'text-bottom',
+                opacity: 0.9,
+              }}
+            />
+          )}
+        </div>
       </div>
 
-      {/* "Data Engine" */}
+      {/* Right: "why" copy */}
       <div
         style={{
-          fontSize: 80,
-          fontWeight: 900,
-          color: '#ffffff',
-          lineHeight: 1,
-          letterSpacing: '-0.02em',
-          opacity: word2Opacity,
-          transform: `translateY(${word2Y}px)`,
-          marginTop: 4,
+          width: 380,
+          opacity: whyOpacity,
+          transform: `translateY(${whyY}px)`,
+          borderLeft: `1px solid rgba(255,255,255,0.08)`,
+          paddingLeft: 32,
         }}
       >
-        Data Engine
-      </div>
-
-      {/* Green accent bar */}
-      <div
-        style={{
-          width: barWidth,
-          height: 3,
-          background: COLORS.green,
-          borderRadius: 2,
-          marginTop: 28,
-          boxShadow: `0 0 12px ${COLORS.green}80`,
-        }}
-      />
-
-      {/* Subtitle — typewriter */}
-      <div
-        style={{
-          marginTop: 20,
-          fontSize: 15,
-          fontWeight: 500,
-          color: COLORS.green,
-          fontFamily: COLORS.monoFont,
-          letterSpacing: '0.02em',
-          minHeight: 22,
-        }}
-      >
-        {subtitleText}
-        {cursorVisible && (
-          <span
-            style={{
-              display: 'inline-block',
-              width: 9,
-              height: 16,
-              background: COLORS.green,
-              marginLeft: 2,
-              verticalAlign: 'text-bottom',
-              opacity: 0.9,
-            }}
-          />
-        )}
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: COLORS.green,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            marginBottom: 14,
+          }}
+        >
+          Why it matters
+        </div>
+        <div
+          style={{
+            fontSize: 17,
+            fontWeight: 500,
+            color: 'rgba(255,255,255,0.88)',
+            lineHeight: 1.55,
+            letterSpacing: '-0.005em',
+          }}
+        >
+          Clean test sets miss the cases users actually find — typos,
+          jailbreaks, hostile phrasing, ambiguous intent.
+        </div>
+        <div
+          style={{
+            marginTop: 16,
+            fontSize: 17,
+            fontWeight: 500,
+            color: 'rgba(255,255,255,0.88)',
+            lineHeight: 1.55,
+            letterSpacing: '-0.005em',
+          }}
+        >
+          CertOps generates them by design — domain-grounded, reproducible,
+          hostile.
+        </div>
       </div>
     </AbsoluteFill>
   );

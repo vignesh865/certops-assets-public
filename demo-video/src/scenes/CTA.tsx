@@ -89,7 +89,7 @@ export const CTA: React.FC = () => {
           position: 'relative',
         }}
       >
-        The Universal AI Verifier
+        Deploy with Confidence
       </div>
 
       {/* Thesis line — closes the loop on Problem */}

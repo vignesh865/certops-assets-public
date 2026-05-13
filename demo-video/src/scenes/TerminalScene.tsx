@@ -153,20 +153,39 @@ export const TerminalScene: React.FC = () => {
         </div>
       </div>
 
-      {/* Pipeline diagram */}
+      {/* Pipeline diagram + continuous-certification tagline */}
       <div
         style={{
           marginTop: 22,
-          fontSize: 13,
-          color: COLORS.textMuted,
-          fontFamily: COLORS.monoFont,
-          letterSpacing: '0.02em',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 8,
           opacity: pipelineOpacity,
         }}
       >
-        Build → Deploy (Staging) →{' '}
-        <span style={{ color: COLORS.green, fontWeight: 600 }}>Certify</span>{' '}
-        → Promote
+        <div
+          style={{
+            fontSize: 13,
+            color: COLORS.textMuted,
+            fontFamily: COLORS.monoFont,
+            letterSpacing: '0.02em',
+          }}
+        >
+          Build → Deploy (Staging) →{' '}
+          <span style={{ color: COLORS.green, fontWeight: 600 }}>Certify</span>{' '}
+          → Promote
+        </div>
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: COLORS.textMuted,
+            letterSpacing: '0.01em',
+          }}
+        >
+          Continuous certification — every release, every model.
+        </div>
       </div>
     </AbsoluteFill>
   );

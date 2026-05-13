@@ -14,14 +14,13 @@ export const COLORS = {
 } as const;
 
 export const SCENE_DURATIONS = {
-  problem: 210,          // 7s — extended hold after subtext
-  identity: 150,         // 5s
+  problem: 360,          // 12s — question, evidence, strikethrough, philosophy line
+  identity: 330,         // 11s — bg lift → reveal → hold → slide → solutions → continuous certification payoff
   dashboard: 210,        // 7s
   wizard: 210,           // 7s
-  adversarialHero: 150,  // 5s — big-type hero reveal
-  mutationTypes: 210,    // 7s — 12 mutation types typewriter
+  adversarialHero: 180,  // 6s — big-type hero reveal + why pane
   datalab: 210,          // 7s — DataLab: datasets + new job carousel
-  config: 150,           // 5s (shortened)
+  config: 180,           // 6s — typewriter + settle hold
   engine: 180,           // 6s — extended hold after DECIDE
   terminal: 180,         // 6s
   metrics: 150,          // 5s (shortened)

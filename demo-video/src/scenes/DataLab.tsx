@@ -12,12 +12,10 @@ const SLIDES = [
 const STEP_FRAMES = 98;
 const SLIDE_FRAMES = 12;
 
-// Layout math (scene inner: 1152px wide, 640px tall):
-// DataLab1 aspect = 3024/1584 = 1.909 → at W=1040: H=545px (most constraining)
-// DataLab5 aspect = 3024/1608 = 1.881 → at W=1040: H=553px (clips 8px at bottom, fine)
-// SectionLabel(48) + carousel(545) + dots(40) = 633px < 640px ✓
-const CAROUSEL_W = 1040;
-const CAROUSEL_H = 545;
+const LEFT_W = 360;
+const GAP = 56;
+const CAROUSEL_W = 720;
+const CAROUSEL_H = 408;
 
 export const DataLab: React.FC = () => {
   const frame = useCurrentFrame();
@@ -43,29 +41,134 @@ export const DataLab: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  const slideFlash = isSliding ? 1 - slideProgress : 0;
-  const breathe = (Math.sin(frame * 0.07) + 1) / 2;
-  const glowOpacity = containerOpacity * (slideFlash * 0.55 + 0.15 + 0.15 * breathe);
-
-  const taglineOpacity = interpolate(frame, [140, 168], [0, 1], {
+  const captionOpacity = interpolate(frame, [4, 28], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
+  const captionY = interpolate(frame, [4, 28], [16, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  const slideFlash = isSliding ? 1 - slideProgress : 0;
+  const breathe = (Math.sin(frame * 0.07) + 1) / 2;
+  const glowOpacity = containerOpacity * (slideFlash * 0.55 + 0.15 + 0.15 * breathe);
 
   return (
     <AbsoluteFill
       style={{
         background: COLORS.bg,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: GAP,
         fontFamily: inter,
         padding: '40px 64px',
       }}
     >
-      <SectionLabel label="Generate adversarial test data" />
+      {/* Left caption */}
+      <div
+        style={{
+          width: LEFT_W,
+          display: 'flex',
+          flexDirection: 'column',
+          opacity: captionOpacity,
+          transform: `translateY(${captionY}px)`,
+        }}
+      >
+        <SectionLabel label="DataLab" />
+        <div
+          style={{
+            fontSize: 44,
+            fontWeight: 800,
+            color: COLORS.textPrimary,
+            lineHeight: 1.08,
+            letterSpacing: '-0.022em',
+          }}
+        >
+          Generate adversarial test data.
+        </div>
+        <div
+          style={{
+            marginTop: 18,
+            fontSize: 16,
+            fontWeight: 500,
+            color: COLORS.textSecondary,
+            lineHeight: 1.5,
+          }}
+        >
+          Bring your golden set. CertOps mutates it into thousands of hostile
+          variants — typos, jailbreaks, paraphrases, edge cases — all
+          domain-grounded.
+        </div>
 
+        {/* Hero number */}
+        <div style={{ marginTop: 28, display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <span
+            style={{
+              fontSize: 36,
+              fontWeight: 800,
+              color: COLORS.green,
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+            }}
+          >
+            200 → 2,400
+          </span>
+          <span style={{ fontSize: 13, color: COLORS.textMuted, fontWeight: 500 }}>
+            rows
+          </span>
+        </div>
+        <div style={{ marginTop: 6, fontSize: 13, color: COLORS.textMuted }}>
+          12× coverage from one click.
+        </div>
+
+        {/* Slide ticker */}
+        <div
+          style={{
+            marginTop: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+          }}
+        >
+          {SLIDES.map((slide, i) => {
+            const active = i === stepIndex;
+            return (
+              <div
+                key={slide.src}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  opacity: active ? 1 : 0.45,
+                }}
+              >
+                <div
+                  style={{
+                    width: i === stepIndex ? 22 : 8,
+                    height: 8,
+                    borderRadius: 4,
+                    background: active ? COLORS.green : COLORS.border,
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: active ? 600 : 500,
+                    color: active ? COLORS.textPrimary : COLORS.textSecondary,
+                  }}
+                >
+                  {slide.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Right carousel */}
       <div
         style={{
           width: CAROUSEL_W,
@@ -97,49 +200,6 @@ export const DataLab: React.FC = () => {
             />
           </div>
         ))}
-      </div>
-
-      {/* Slide indicator dots + current label */}
-      <div
-        style={{
-          marginTop: 20,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          opacity: containerOpacity,
-        }}
-      >
-        {SLIDES.map((slide, i) => (
-          <div key={slide.src} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div
-              style={{
-                width: i === stepIndex ? 24 : 8,
-                height: 8,
-                borderRadius: 4,
-                background: i === stepIndex ? COLORS.green : COLORS.border,
-              }}
-            />
-            {i === stepIndex && (
-              <span style={{ fontSize: 13, color: COLORS.textSecondary, fontWeight: 500 }}>
-                {slide.label}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom tagline — concrete output number */}
-      <div
-        style={{
-          marginTop: 14,
-          fontSize: 13,
-          color: COLORS.textMuted,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          opacity: taglineOpacity,
-        }}
-      >
-        200 rows in. 2,400 adversarial cases out.
       </div>
     </AbsoluteFill>
   );

@@ -10,7 +10,6 @@ import { Dashboard } from './scenes/Dashboard';
 import { WizardShowcase } from './scenes/WizardShowcase';
 import { DataLab } from './scenes/DataLab';
 import { AdversarialHero } from './scenes/AdversarialHero';
-import { MutationTypes } from './scenes/MutationTypes';
 import { Config } from './scenes/Config';
 import { Engine } from './scenes/Engine';
 import { TerminalScene } from './scenes/TerminalScene';
@@ -73,11 +72,6 @@ export const CertOpsDemo: React.FC = () => {
 
         <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.adversarialHero}>
           <AdversarialHero />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Transition presentation={fade()} timing={FADE} />
-
-        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.mutationTypes}>
-          <MutationTypes />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={FADE} />
 
